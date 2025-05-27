@@ -103,7 +103,6 @@ class Account:
     def close_account(self):
         self.balance = 0.0
         self.transactions.clear()
-        self.is_frozen = True
         print("This account has been closed. You do not have any balance.")
         
         
