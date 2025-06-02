@@ -1,40 +1,53 @@
+from datetime import datetime
+
+class Transaction:
+    def __init__(self,date_time,narration,amount,transaction_type):
+        self.date_time = date_time
+        self.narration = narration
+        self.amount = amount
+        self.transaction_type = transaction_type
+
 class Account:
     interest_rate = 0.05
     minimum_balance = 200
     def __init__(self,name,account_number):
         self.name = name
         self.balance = 0
-        self.deposits = []
-        self.withdrawals = []
-        self.account_number = account_number
-        self.transactions = []
+        self.__account_number = account_number
         self.loan_approved = False
         self.is_frozen = False
+        self.__transactions = []
 
       
 
-
-    def deposit(self,amount):
-        if amount >0:
-            self.balance += amount
-            print(f"Confirmed you have sucessfully deposited KSH.{amount}. Your new account balance is KSH{self.balance}")
-
-     
-    def withdraw(self,amount):
-        if self.balance - amount < self.minimum_balance:
-                print(f"Your withdrawal was unsuccessful. You cannot withdraw an amount less than KSH.{self.min_balance}")
-        if amount <= self.balance:
-            self.balance -= amount          
-            print(f"You have successfully withdrawn KSH.{amount}. Your new balance is KSH.{self.balance}")  
-        elif amount <= 0:
-            print("Withdrawal amount must be positive")
+    def deposit(self,amount, narration = "Deposit"):
+        if amount <= 0:
+            print("Deposit amount must be positive.")
+            return 
+            transaction = Transaction(datetime.now(),narration,amount, "credit")
+            self.__transactions.append(transaction)
+            print("Deposit successful.")
         
+
+    def withdraw(self,amount,narration = "Withdrawal"):
+        if amount <=0:
+            print("Withdrawal amount must be positive.")
+        if self.get_balance() >= amount:
+            transaction = Transaction(datetime.now(),narration,-amount, "debit")
+            self.__transactions.append(transaction)
+            print(f"Your withdrawal of {amount} was successful")
         else:
-            print("Insufficient funds")
-        
-    def get_balance(self):
-        return self.balance
+            print("You have insufficients funds in your account!")
 
+
+    def get_balance(self):
+        return sum(t.amount for t in self.__transactions)
+
+    def get_account_number(self):
+        return self.__account_number
+
+    def get_transaction_history(self):
+        return self.__transactions
 
     def transfer_funds(self,recipient, amount):
         if amount>0  and amount <= self.balance:
@@ -99,12 +112,9 @@ class Account:
     def min_balance(self,amount):
         return (self.balance - amount) >= self.minimum_balance
 
-
     def close_account(self):
         self.balance = 0.0
         self.transactions.clear()
         print("This account has been closed. You do not have any balance.")
-        
-        
 
 
